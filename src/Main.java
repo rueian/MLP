@@ -1,7 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Set;
 
 public class Main {
+
+    private static ArrayList<Data> dataSet;
+    private static HashMap<Double, Double> outputSet;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
@@ -61,6 +72,27 @@ public class Main {
             }
         });
 
+        loadFileButton.addActionListener(e -> {
+            File rawDataSet = new File(filePathField.getText());
+            try (BufferedReader br = new BufferedReader(new FileReader(rawDataSet))) {
+                dataSet = new ArrayList<>();
+                outputSet = new HashMap<>();
+                for (String line; (line = br.readLine()) != null;) {
+                    double[] values = Arrays.stream(line.split(" |\t"))
+                                            .filter(s -> s.length() > 0)
+                                            .mapToDouble(Double::parseDouble).toArray();
+                    dataSet.add(new Data(values));
+                }
+                for (Data data : dataSet) {
+                    outputSet.put(data.expected, null);
+                }
+                inspect();
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(null, "無法解析所選檔案，請換一個試試看");
+                return;
+            }
+        });
+
         panel.setLayout(new FlowLayout());
         panel.setPreferredSize(new Dimension(500, 500));
 
@@ -89,6 +121,19 @@ public class Main {
         frame.pack();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    public static void inspect() {
+        for(int i = 0; i < dataSet.size(); i++) {
+            for(double v : dataSet.get(i).values) {
+                System.out.print(v + " ");
+            }
+            System.out.println(dataSet.get(i).expected);
+        }
+        Set<Double> keys = outputSet.keySet();
+        for(Double key : keys) {
+            System.out.println("key" + key);
+        }
     }
 
 }
