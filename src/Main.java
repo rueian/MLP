@@ -12,7 +12,6 @@ import java.util.Set;
 public class Main {
 
     private static ArrayList<Data> dataSet;
-    private static HashMap<Double, Double> outputSet;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
@@ -77,15 +76,11 @@ public class Main {
             File rawDataSet = new File(filePathField.getText());
             try (BufferedReader br = new BufferedReader(new FileReader(rawDataSet))) {
                 dataSet = new ArrayList<>();
-                outputSet = new HashMap<>();
                 for (String line; (line = br.readLine()) != null;) {
                     double[] values = Arrays.stream(line.split(" |\t"))
                                             .filter(s -> s.length() > 0)
                                             .mapToDouble(Double::parseDouble).toArray();
                     dataSet.add(new Data(values));
-                }
-                for (Data data : dataSet) {
-                    outputSet.put(data.expected, null);
                 }
                 inspect();
             } catch (IOException e1) {
@@ -141,10 +136,6 @@ public class Main {
                 System.out.print(v + " ");
             }
             System.out.println(dataSet.get(i).expected);
-        }
-        Set<Double> keys = outputSet.keySet();
-        for(Double key : keys) {
-            System.out.println("key" + key);
         }
     }
 

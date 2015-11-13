@@ -1,11 +1,14 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by rueian on 2015/11/12.
  */
 public class MLP {
     private List<Data> dataSet;
+    private HashMap<Double, Output> outputSet = new HashMap<>();
     private List<List<Perceptron>> network = new ArrayList<>();
 
     private int[] structure;
@@ -22,6 +25,19 @@ public class MLP {
         this.learningTimes = learningTimes;
         this.converge = converge;
 
+        // 正規化輸出
+        double[] expected = dataSet.stream().mapToDouble(d -> d.expected).distinct().toArray();
+        double outputNum = expected.length;
+        double outputMax = structure[structure.length - 1];
+
+        for (int i = 0; i < outputNum; i ++) {
+            double desire = i * (outputMax / (outputNum - 1));
+            double low    = (desire + (i - 1) * (outputMax / (outputNum - 1))) / 2;
+            double high   = (desire + (i + 1) * (outputMax / (outputNum - 1))) / 2;
+            outputSet.put(expected[i], new Output(low, desire, high));
+        }
+
+        // 初始化網路
         network.add(new ArrayList<>());
         int dimension = dataSet.get(0).dimension();
         for (int i = 0; i < dimension; i ++) {
@@ -51,10 +67,20 @@ public class MLP {
             }
         }
 
+        // 倒傳遞階段 1 輸出層
+
+
+
         inspect();
     }
 
     private void inspect() {
+        Set<Double> keys = outputSet.keySet();
+        for(Double key : keys) {
+            Output o = outputSet.get(key);
+            System.out.println("key " + key + " low " + o.low + " desire " + o.desired + " high " + o.high);
+        }
+
         for(List<Perceptron> list : network) {
             for(Perceptron p : list)
                 System.out.print(Math.round( p.y * 100.0 ) / 100.0 + " ");
