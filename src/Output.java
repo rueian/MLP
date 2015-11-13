@@ -11,5 +11,4 @@ public class Output {
         this.desired = desired;
         this.high = high;
     }
-
 }

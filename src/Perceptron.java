@@ -8,8 +8,10 @@ import java.util.Random;
 public class Perceptron {
     public List<Double> w = new ArrayList<>();
     public List<Double> wp = new ArrayList<>();
+    public double[] input;
     public double y = 0.0;
     public double yp = 0.0;
+    public double delta;
 
     public Perceptron(int dimension) {
         Random random = new Random(System.nanoTime());
@@ -24,6 +26,8 @@ public class Perceptron {
             System.out.println("長度不符合～～");
         }
 
+        this.input = input;
+
         this.yp = this.y; // save previous output
 
         double sum = -1 * w.get(w.size() - 1);
@@ -34,6 +38,17 @@ public class Perceptron {
         this.y = sigmoid(sum); // save new output
 
         return this.y;
+    }
+
+    public void update(double learningRate, double inertia) {
+        for (int i = 0; i < this.w.size(); i ++) {
+            double original = this.w.get(i);
+            double previous = this.wp.get(i);
+            double input = (i == this.w.size() - 1) ? -1 : this.input[i];
+            double nDiff = inertia * previous + learningRate * delta * input;
+            this.w.set(i, original + nDiff);
+            this.wp.set(i, nDiff);
+        }
     }
 
     private double sigmoid(double x) {

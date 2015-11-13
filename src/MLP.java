@@ -16,14 +16,16 @@ public class MLP {
     private int learningTimes;
     private double learningRate;
     private double converge;
+    private double inertia;
 
 
-    public MLP(List<Data> dataSet, int[] structure, double learningRate, int learningTimes, double converge) {
+    public MLP(List<Data> dataSet, int[] structure, double learningRate, int learningTimes, double converge, double inertia) {
         this.dataSet = dataSet;
         this.structure = structure;
         this.learningRate = learningRate;
         this.learningTimes = learningTimes;
         this.converge = converge;
+        this.inertia = inertia;
 
         // 正規化輸出
         double[] expected = dataSet.stream().mapToDouble(d -> d.expected).distinct().toArray();
@@ -67,10 +69,36 @@ public class MLP {
             }
         }
 
+        System.out.println("STEP 1");
+        inspect();
+
         // 倒傳遞階段 1 輸出層
+        double outSum = network.get(network.size() - 1).stream().mapToDouble(p -> p.y).sum();
+        double desire = outputSet.get(data.expected).desired;
+        double deltaO = (desire - outSum) * outSum * (1 - outSum);
+        for (Perceptron p : network.get(network.size() - 1)) {
+            p.delta = deltaO;
+        }
 
+        // 倒傳遞階段 2 隱藏層
+        for (int i = network.size() - 2; i > 0; i --) {
+            for (int j = 0; j < network.get(i).size(); j++) {
+                Perceptron p = network.get(i).get(j);
+                double sum = 0;
+                for (Perceptron pp : network.get(i + 1)) {
+                    sum += pp.delta * pp.w.get(j);
+                }
+                p.delta = p.y * (1 - p.y) * sum;
+            }
+        }
 
+        for (List<Perceptron> list : network) {
+            for (Perceptron p : list) {
+                p.update(learningRate, inertia);
+            }
+        }
 
+        System.out.println("STEP 2");
         inspect();
     }
 

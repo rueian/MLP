@@ -6,8 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
 
 public class Main {
 
@@ -28,6 +26,9 @@ public class Main {
 
         JLabel learnRateLabel = new JLabel("學習率");
         JTextField learnRateField = new JTextField("0.2");
+
+        JLabel inertiaLabel = new JLabel("慣性");
+        JTextField inertiaField = new JTextField("0.5");
 
         JLabel learnTimesLabel = new JLabel("學習次數");
         JTextField learnTimesField = new JTextField("10");
@@ -50,14 +51,17 @@ public class Main {
         structureLabel.setPreferredSize(new Dimension(60, 40));
         structureField.setPreferredSize(new Dimension(400, 40));
 
-        learnRateLabel.setPreferredSize(new Dimension(60, 40));
-        learnRateField.setPreferredSize(new Dimension(90, 40));
+        learnRateLabel.setPreferredSize(new Dimension(50, 40));
+        learnRateField.setPreferredSize(new Dimension(50, 40));
+
+        inertiaLabel.setPreferredSize(new Dimension(50, 40));
+        inertiaField.setPreferredSize(new Dimension(50, 40));
 
         learnTimesLabel.setPreferredSize(new Dimension(60, 40));
-        learnTimesField.setPreferredSize(new Dimension(90, 40));
+        learnTimesField.setPreferredSize(new Dimension(50, 40));
 
         convergeLabel.setPreferredSize(new Dimension(60, 40));
-        convergeField.setPreferredSize(new Dimension(90, 40));
+        convergeField.setPreferredSize(new Dimension(50, 40));
 
         startButton.setPreferredSize(new Dimension(150, 40));
         pauseButton.setPreferredSize(new Dimension(150, 40));
@@ -94,8 +98,9 @@ public class Main {
                                     .mapToInt(Integer::parseInt).toArray();
             double learnRate = Double.parseDouble(learnRateField.getText());
             double converge = Double.parseDouble(convergeField.getText());
+            double inertia = Double.parseDouble(inertiaField.getText());
             int learnTimes = Integer.parseInt(learnTimesField.getText());
-            MLP mlp = new MLP(dataSet, structure, learnRate, learnTimes, converge);
+            MLP mlp = new MLP(dataSet, structure, learnRate, learnTimes, converge, inertia);
 
             mlp.training();
         });
@@ -113,6 +118,9 @@ public class Main {
 
         panel.add(learnRateLabel);
         panel.add(learnRateField);
+
+        panel.add(inertiaLabel);
+        panel.add(inertiaField);
 
         panel.add(learnTimesLabel);
         panel.add(learnTimesField);
