@@ -19,12 +19,13 @@ public class Main {
         JPanel panel = new JPanel();
 
         JLabel filePathLabel = new JLabel("資料集");
-        JTextField filePathField = new JTextField(System.getProperty("user.home"));
+//        JTextField filePathField = new JTextField(System.getProperty("user.home"));
+        JTextField filePathField = new JTextField("/Users/rueian/第二次作業資料集/xor.txt");
         JButton loadFileDialog = new JButton("選擇");
         JButton loadFileButton = new JButton("載入");
 
         JLabel structureLabel = new JLabel("架構");
-        JTextField structureField = new JTextField("3,3,2");
+        JTextField structureField = new JTextField("2,1");
 
         JLabel learnRateLabel = new JLabel("學習率");
         JTextField learnRateField = new JTextField("0.2");
@@ -91,6 +92,17 @@ public class Main {
                 JOptionPane.showMessageDialog(null, "無法解析所選檔案，請換一個試試看");
                 return;
             }
+        });
+
+        startButton.addActionListener(e -> {
+            int[] structure = Arrays.stream(structureField.getText().split(","))
+                                    .mapToInt(Integer::parseInt).toArray();
+            double learnRate = Double.parseDouble(learnRateField.getText());
+            double converge = Double.parseDouble(convergeField.getText());
+            int learnTimes = Integer.parseInt(learnTimesField.getText());
+            MLP mlp = new MLP(dataSet, structure, learnRate, learnTimes, converge);
+
+            mlp.training();
         });
 
         panel.setLayout(new FlowLayout());

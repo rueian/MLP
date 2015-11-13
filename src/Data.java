@@ -22,6 +22,10 @@ public class Data {
         return this.values.size();
     }
 
+    public int dimension() {
+        return this.size();
+    }
+
     public double get(int i) {
         return this.values.get(i);
     }
